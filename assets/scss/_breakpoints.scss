@@ -1,0 +1,9 @@
+$bp-sm: 576px;
+$bp-md: 768px;
+$bp-lg: 992px;
+$bp-xl: 1300px;
+
+@mixin media-breakpoint-up($name) {
+  $bps: (sm: $bp-sm, md: $bp-md, lg: $bp-lg, xl: $bp-xl);
+  @media (min-width: map-get($bps, $name)) { @content; }
+}

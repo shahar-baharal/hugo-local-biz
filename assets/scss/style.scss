@@ -25,14 +25,17 @@ $font-family-heading: {{ .Site.Params.fonts.heading }}, serif, -apple-system;
   --font-heading:  #{$font-family-heading};
 }
 
-// Variables - Override Bootstrap variables and set your own here
-@import 'variables';
+// Breakpoints mixin (must come before grid and utilities)
+@import 'breakpoints';
 
-// Bootstrap
-@import 'bootstrap/bootstrap-reboot';
-@import 'bootstrap/bootstrap-grid';
-@import 'bootstrap/bootstrap-utilities';
-// @import 'bootstrap/bootstrap'; // Uncomment this line to import the entire Bootstrap library
+// Reset
+@import 'reset';
+
+// Grid
+@import 'grid';
+
+// Utilities
+@import 'utilities';
 
 // Libraries
 @import 'libraries/hamburgers/hamburgers';
