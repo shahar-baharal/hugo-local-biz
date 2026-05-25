@@ -25,11 +25,10 @@
 {{ end }}
 
 {{ define "main" }}
-{{ partial "sections/hero.html" . }}
-{{ partial "sections/services.html" . }}
-{{ partial "sections/hours.html" . }}
-{{ partial "sections/testimonials.html" . }}
-{{ partial "sections/faq.html" . }}
+{{ $sections := .Site.Params.homepage.sections | default (slice "hero" "services" "hours" "testimonials" "faq") }}
+{{ range $sections }}
+  {{ partial (printf "sections/%s.html" .) $ }}
+{{ end }}
 {{ end }}
 
 {{ define "footer_js" }}

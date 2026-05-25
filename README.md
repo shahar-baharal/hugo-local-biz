@@ -65,6 +65,7 @@ All keys live under `[params]` unless noted.
 |---|---|---|---|
 | `sticky_header` | bool | `false` | Makes the header stick to the top on scroll |
 | `show_info_box` | bool | `false` | Shows the contact info box (phone + email) in the hero section |
+| `sections` | `[]string` | all five in default order | Ordered list of homepage sections to render. See [Homepage sections](#homepage-sections). |
 
 ### `[params.logo]`
 
@@ -237,15 +238,50 @@ price_range: "$$"                 # optional, schema.org priceRange
 
 ## Homepage sections
 
-Sections are rendered in this fixed order by `layouts/index.html`:
+Configure which sections appear and in what order via `params.homepage.sections` in `hugo.toml`:
 
-| Section | Partial | Data source | Conditional |
+```toml
+[params.homepage]
+  sections = ["hero", "services", "hours", "testimonials", "faq"]
+```
+
+Omit a name to hide that section. Reorder entries to change display order. If `sections` is not set, the default order above is used.
+
+### Available sections
+
+| Name | Partial | Data source | Notes |
 |---|---|---|---|
-| Hero | `sections/hero.html` | `content/_index.md` body + `data/contact.yaml` | Always shown |
-| Services | `sections/services.html` | `data/services.json` | Hidden if `services` array is empty |
-| Hours | `sections/hours.html` | `data/hours.json` | Always shown |
-| Testimonials | `sections/testimonials.html` | `data/testimonials.json` | Hidden if `testimonials` array is empty |
-| FAQ | `sections/faq.html` | `data/faq.json` | Always shown |
+| `hero` | `sections/hero.html` | `content/_index.md` + `data/contact.yaml` | Always shown when included |
+| `services` | `sections/services.html` | `data/services.json` | Self-hides if `services` array is empty |
+| `hours` | `sections/hours.html` | `data/hours.json` | Always shown when included |
+| `testimonials` | `sections/testimonials.html` | `data/testimonials.json` | Self-hides if `testimonials` array is empty |
+| `faq` | `sections/faq.html` | `data/faq.json` | Always shown when included |
+| `features` | `sections/features.html` | `data/features.json` | Not in default list; self-hides if `features` array is empty |
+
+### Adding a custom section
+
+1. **Create the partial** — add `layouts/partials/sections/my-section.html` in your site repo (not the theme). Hugo's lookup order means site layouts override and extend theme layouts.
+
+   Minimal template structure:
+   ```html
+   <div id="my-section" class="strip">
+     <div class="container pt-6 pb-6 pt-md-10 pb-md-10">
+       <div class="row justify-content-center">
+         <!-- your content here -->
+       </div>
+     </div>
+   </div>
+   ```
+
+2. **Add data** (optional) — if the section reads from a data file, add it to `data/my-section.json` or `data/my-section.yaml`. Access it in the template via `hugo.Data.my_section`.
+
+3. **Add styles** (optional) — add a SCSS file at `assets/scss/components/_my-section.scss` in your site repo, then import it by adding `@import 'components/my-section';` to a local `assets/scss/style.scss` override. Hugo merges asset directories from site and theme.
+
+4. **Register it** — add `"my-section"` to the `sections` array in `hugo.toml`:
+   ```toml
+   [params.homepage]
+     sections = ["hero", "services", "my-section", "hours", "faq"]
+   ```
 
 ---
 
@@ -253,13 +289,18 @@ Sections are rendered in this fixed order by `layouts/index.html`:
 
 All styles live in `assets/scss/`. The entry point is `style.scss`, which imports in order:
 
-1. `_variables.scss` — receives Hugo param values (colors, fonts) injected as SCSS variables
-2. Bootstrap partials — `reboot`, `grid`, `utilities` only (not full Bootstrap)
-3. `libraries/hamburgers/` — hamburger menu animation library
-4. Component files (`_header`, `_footer`, `_main-menu`, `_buttons`, `_intro`, `_call`, etc.)
-5. Page-specific files under `pages/`
+1. Hugo param values (colors, fonts) injected as SCSS variables, then a `:root {}` block exposing them as CSS custom properties (`--primary`, `--black`, etc.)
+2. `_breakpoints.scss` — `media-breakpoint-up()` mixin with the four standard breakpoints (sm/md/lg/xl)
+3. `_reset.scss` — minimal modern CSS reset (box-sizing, zero margins, font smoothing)
+4. `_grid.scss` — flexbox grid: `.container`, `.row`, `.col-*` for the column classes used in templates
+5. `_utilities.scss` — only the utility classes used in templates (spacing, text, display, etc.)
+6. `libraries/hamburgers/` — hamburger menu animation library
+7. Component files (`_header`, `_footer`, `_main-menu`, `_buttons`, `_intro`, `_call`, etc.)
+8. Page-specific files under `pages/`
 
 To restyle a specific element, find its component file (e.g. `_header.scss` for the sticky header, `_call.scss` for the contact box) and edit there. Avoid inline styles in templates — put them in the component SCSS.
+
+All color and font values are exposed as CSS custom properties. Components use `var(--primary)`, `var(--black)`, etc. rather than SCSS variables directly — this makes them visible in browser devtools and overridable at runtime.
 
 ---
 
