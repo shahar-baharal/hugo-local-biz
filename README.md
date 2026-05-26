@@ -260,28 +260,95 @@ Omit a name to hide that section. Reorder entries to change display order. If `s
 
 ### Adding a custom section
 
-1. **Create the partial** — add `layouts/partials/sections/my-section.html` in your site repo (not the theme). Hugo's lookup order means site layouts override and extend theme layouts.
+The full pattern has four parts: data file, template, CMS collection, and registration. Here's a complete walkthrough using a "promotions" section as the example.
 
-   Minimal template structure:
-   ```html
-   <div id="my-section" class="strip">
-     <div class="container pt-6 pb-6 pt-md-10 pb-md-10">
-       <div class="row justify-content-center">
-         <!-- your content here -->
-       </div>
-     </div>
-   </div>
-   ```
+#### 1. Create the data file
 
-2. **Add data** (optional) — if the section reads from a data file, add it to `data/my-section.json` or `data/my-section.yaml`. Access it in the template via `hugo.Data.my_section`.
+Add `data/promotions.json` in your site repo:
 
-3. **Add styles** (optional) — add a SCSS file at `assets/scss/components/_my-section.scss` in your site repo, then import it by adding `@import 'components/my-section';` to a local `assets/scss/style.scss` override. Hugo merges asset directories from site and theme.
+```json
+{
+  "promotions": [
+    {
+      "title": "10% Off First Visit",
+      "description": "Book online and save on your first service."
+    }
+  ]
+}
+```
 
-4. **Register it** — add `"my-section"` to the `sections` array in `hugo.toml`:
-   ```toml
-   [params.homepage]
-     sections = ["hero", "services", "my-section", "hours", "faq"]
-   ```
+Use a top-level wrapper key matching the filename (`"promotions"`). This is required by Decap CMS's file collection format.
+
+Access it in templates via `hugo.Data.promotions.promotions`.
+
+#### 2. Create the template partial
+
+Add `layouts/partials/sections/promotions.html` in your site repo (not the theme — Hugo's lookup order merges site and theme layouts):
+
+```html
+{{ if hugo.Data.promotions.promotions }}
+<div id="promotions" class="strip">
+  <div class="container pt-6 pb-6 pt-md-10 pb-md-10">
+    <div class="row justify-content-center">
+      <div class="col-12 text-center mb-4">
+        <h2>Current Promotions</h2>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      {{ range hugo.Data.promotions.promotions }}
+      <div class="col-12 col-md-6 mb-4">
+        <h3>{{ .title }}</h3>
+        <p>{{ .description }}</p>
+      </div>
+      {{ end }}
+    </div>
+  </div>
+</div>
+{{ end }}
+```
+
+Wrapping the whole thing in `{{ if hugo.Data.promotions.promotions }}` makes the section self-hide when the data file is empty or absent — no config change needed to toggle it off.
+
+#### 3. Add a CMS collection
+
+Add this block to `static/admin/config.yml` under `collections:`:
+
+```yaml
+- name: "promotions"
+  label: "Promotions"
+  files:
+    - label: "Promotions"
+      name: "promotions"
+      file: "data/promotions.json"
+      fields:
+        - label: "Promotions"
+          name: "promotions"
+          widget: "list"
+          fields:
+            - { label: "Title", name: "title", widget: "string" }
+            - { label: "Description", name: "description", widget: "text" }
+```
+
+Each field in `fields` maps to a key in the JSON objects. Widget types: `string` (single line), `text` (multiline), `image` (file picker), `boolean`, `select`.
+
+#### 4. Register it in `hugo.toml`
+
+Add the section name to the `sections` array in the position you want it to appear:
+
+```toml
+[params.homepage]
+  sections = ["hero", "services", "promotions", "hours", "faq"]
+```
+
+#### Optional: add styles
+
+Add `assets/scss/components/_promotions.scss` in your site repo, then create `assets/scss/style.scss` in the site repo with:
+
+```scss
+@import 'components/promotions';
+```
+
+Hugo merges asset directories from site and theme, so this file extends (not replaces) the theme's `style.scss`.
 
 ---
 
