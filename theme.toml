@@ -1,7 +1,7 @@
-name = "shahar-local-biz"
+name = "hugo-local-biz"
 license = "MIT"
 description = "Hugo theme for local business lead generation sites"
-homepage = "https://github.com/shaharbest/shahar-local-biz"
+homepage = "https://github.com/shahar-baharal/hugo-local-biz"
 min_version = "0.110.0"
 
 [author]

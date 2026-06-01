@@ -1,4 +1,4 @@
-# shahar-local-biz
+# hugo-local-biz
 
 Hugo theme for local business lead-generation websites. Covers the full homepage with configurable sections (hero, services, hours, testimonials, FAQ), a contact box, SEO/schema markup, and Decap CMS compatibility. MIT licensed.
 
@@ -23,11 +23,11 @@ hugo mod init github.com/yourname/my-business-site
 cat >> hugo.toml <<'EOF'
 [module]
   [[module.imports]]
-    path = "github.com/shaharbest/shahar-local-biz"
+    path = "github.com/shahar-baharal/hugo-local-biz"
 EOF
 
 # 4. Fetch the theme
-hugo mod get github.com/shaharbest/shahar-local-biz@latest
+hugo mod get github.com/shahar-baharal/hugo-local-biz@latest
 hugo mod tidy
 
 # 5. Start dev server
@@ -39,7 +39,7 @@ Copy the data file schemas (below) and the `config.toml` params to configure you
 ## Updating the theme
 
 ```bash
-hugo mod get -u github.com/shaharbest/shahar-local-biz
+hugo mod get -u github.com/shahar-baharal/hugo-local-biz
 hugo mod tidy
 git add go.mod go.sum
 git commit -m "Update theme"
