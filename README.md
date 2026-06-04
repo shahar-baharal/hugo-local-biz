@@ -352,6 +352,47 @@ Hugo merges asset directories from site and theme, so this file extends (not rep
 
 ---
 
+## Header customization
+
+### Overriding the logo area
+
+The top-left corner of the header is rendered by `layouts/partials/header-logo.html`. Hugo's lookup order lets any site replace it by dropping a file at the same path inside the site's own `layouts/` directory — no theme edits required.
+
+**Default behavior** (icon only, from the theme):
+
+```
+themes/hugo-local-biz/layouts/partials/header-logo.html
+```
+
+**To override in your site**, create:
+
+```
+layouts/partials/header-logo.html
+```
+
+The partial receives the full Hugo page context (`.`), so `.Site.Params`, `.Site.Title`, menus, etc. are all available.
+
+**Example: icon + company name side by side**
+
+```html
+<div class="logo">
+  <a href="{{ .Site.Home.RelPermalink }}" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+    <img height="{{ .Site.Params.logo.desktop_height }}" alt="{{ .Site.Params.logo.alt }}" src="{{ .Site.Params.logo.desktop | relURL }}" />
+    <span style="font-family: var(--font-heading); font-weight: 600; color: var(--primary); font-size: 1.15rem; white-space: nowrap;">{{ .Site.Title }}</span>
+  </a>
+</div>
+<div class="logo-mobile">
+  <a href="{{ .Site.Home.RelPermalink }}" style="display: flex; align-items: center; gap: 8px; text-decoration: none;">
+    <img height="{{ .Site.Params.logo.mobile_height }}" alt="{{ .Site.Params.logo.alt }}" src="{{ .Site.Params.logo.mobile | relURL }}" />
+    <span style="font-family: var(--font-heading); font-weight: 600; color: var(--primary); font-size: 1rem; white-space: nowrap;">{{ .Site.Title }}</span>
+  </a>
+</div>
+```
+
+The `.logo` / `.logo-mobile` wrappers are still required — the theme's `_logo.scss` uses those classes to handle desktop/mobile visibility. The CSS custom properties `--font-heading`, `--font-base`, `--primary`, `--black`, etc. are all available (set from `hugo.toml` params at build time).
+
+---
+
 ## SCSS architecture
 
 All styles live in `assets/scss/`. The entry point is `style.scss`, which imports in order:
