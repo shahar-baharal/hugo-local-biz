@@ -60,6 +60,7 @@ $font-family-heading: {{ .Site.Params.fonts.heading }}, serif, -apple-system;
 @import 'components/feature';
 @import 'components/hours';
 @import 'components/social';
+@import 'components/gallery';
 
 // Pages
 @import 'pages/home';

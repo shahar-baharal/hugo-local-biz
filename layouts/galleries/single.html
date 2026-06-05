@@ -1,0 +1,55 @@
+{{ define "body_classes" }}page-galleries-single{{ end }}
+
+{{ define "main" }}
+<div class="container pt-6 pb-6 pt-md-10 pb-md-10">
+  <div class="row justify-content-start">
+    <div class="col-12 col-md-10">
+
+      <h1 class="title">{{ .Title }}</h1>
+      <p class="text-muted">{{ .Date.Format "January 2006" }}</p>
+      {{ with .Params.description }}<p>{{ . }}</p>{{ end }}
+
+      {{ with .Params.cover_video }}
+      {{ $video := . }}
+      <div class="gallery-video mb-4">
+        {{ if or (strings.Contains $video "youtube.com") (strings.Contains $video "youtu.be") }}
+          {{ $videoID := "" }}
+          {{ if strings.Contains $video "youtube.com" }}
+            {{ $videoID = replaceRE ".*[?&]v=([^&]+).*" "$1" $video }}
+          {{ else }}
+            {{ $videoID = replaceRE ".*youtu\\.be/([^?]+).*" "$1" $video }}
+          {{ end }}
+          <iframe src="https://www.youtube.com/embed/{{ $videoID }}"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen
+                  loading="lazy"></iframe>
+        {{ else }}
+          <video controls>
+            <source src="{{ $video }}" type="video/mp4">
+          </video>
+        {{ end }}
+      </div>
+      {{ end }}
+
+      {{ with .Params.images }}
+      <div class="row gallery-grid">
+        {{ range . }}
+        <div class="col-12 col-md-6 col-lg-4 mb-2">
+          <figure class="gallery-figure">
+            <img src="{{ .image }}" alt="{{ .caption }}" loading="lazy">
+            {{ with .caption }}<figcaption>{{ . }}</figcaption>{{ end }}
+          </figure>
+        </div>
+        {{ end }}
+      </div>
+      {{ end }}
+
+      <div class="mt-4">
+        <a href="/galleries/" class="button button-secondary">&larr; Back to All Work</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{{ end }}

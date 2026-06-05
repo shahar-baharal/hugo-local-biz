@@ -1,0 +1,30 @@
+{{ define "body_classes" }}page-galleries-list{{ end }}
+
+{{ define "main" }}
+<div class="strip">
+  <div class="container pt-6 pb-6 pt-md-10 pb-md-10">
+    <div class="row">
+      <div class="col-12 mb-4">
+        <h1>{{ .Title }}</h1>
+        {{ with .Content }}<div class="content">{{ . }}</div>{{ end }}
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      {{ range .Pages.ByWeight }}
+      {{ $gallery := . }}
+      <div class="col-12 col-md-6 col-lg-4 mb-2">
+        <a href="{{ .RelPermalink }}" class="gallery-card">
+          <div class="gallery-card-image">
+            {{ with .Params.thumbnail }}<img src="{{ . }}" alt="{{ $gallery.Title }}" loading="lazy">{{ end }}
+          </div>
+          <div class="gallery-card-body">
+            <h2 class="gallery-card-title">{{ .Title }}</h2>
+            {{ with .Params.description }}<p class="gallery-card-desc">{{ . }}</p>{{ end }}
+          </div>
+        </a>
+      </div>
+      {{ end }}
+    </div>
+  </div>
+</div>
+{{ end }}

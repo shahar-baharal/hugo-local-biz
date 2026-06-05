@@ -1,0 +1,26 @@
+{{ $section := site.GetPage "galleries" }}
+{{ if and $section $section.Pages }}
+<div id="galleries" class="strip strip-grey">
+  <div class="container pt-6 pb-6 pt-md-10 pb-md-10">
+    <div class="row justify-content-center">
+      {{ range $section.Pages.ByWeight }}
+      {{ $gallery := . }}
+      <div class="col-12 col-md-6 col-lg-4 mb-2">
+        <a href="{{ .RelPermalink }}" class="gallery-card">
+          <div class="gallery-card-image">
+            {{ with .Params.thumbnail }}<img src="{{ . }}" alt="{{ $gallery.Title }}" loading="lazy">{{ end }}
+          </div>
+          <div class="gallery-card-body">
+            <h2 class="gallery-card-title">{{ .Title }}</h2>
+            {{ with .Params.description }}<p class="gallery-card-desc">{{ . }}</p>{{ end }}
+          </div>
+        </a>
+      </div>
+      {{ end }}
+    </div>
+    <div class="text-center mt-4">
+      <a href="{{ $section.RelPermalink }}" class="button button-primary">View All Work</a>
+    </div>
+  </div>
+</div>
+{{ end }}
